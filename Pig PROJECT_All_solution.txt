@@ -1,0 +1,60 @@
+Solution 1:
+
+users = LOAD '/user/lamoria1993my9356/pig/users.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (login:chararray,name:chararray,state:chararray); #load data
+result = filter users by (state == 'NY');
+store result into '/user/lamoria1993my9356/pig/pigAns1'; #location where save result
+
+Solution 2:
+
+tweets = LOAD '/user/lamoria1993my9356/pig/tweets.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (tid:chararray,tweet:chararray,login:chararray);
+result = filter tweets by LOWER(tweet) matches '.*favorite.*';
+ordered = order result by tid;
+dump ordered;
+store ordered into '/user/lamoria1993my9356/pig/pigAns2';
+
+Solution 3:
+
+users = LOAD '/user/lamoria1993my9356/pig/users.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (login:chararray,name:chararray,state:chararray);
+tweets = LOAD '/user/lamoria1993my9356/pig/tweets.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (tid:chararray,tweet:chararray,login:chararray);
+joins = join users by login,tweets by login;
+dump joins;
+store joins into '/user/lamoria1993my9356/pig/pigAns3';
+
+Solution 4:
+
+users = LOAD '/user/lamoria1993my9356/pig/users.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (login:chararray,name:chararray,state:chararray);
+tweets = LOAD '/user/lamoria1993my9356/pig/tweets.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (tid:chararray,tweet:chararray,login:chararray);
+tweet1 = foreach tweets generate login,tweet;
+tweet2 = group tweet1 by login;
+tweet3 = foreach tweet2 generate group,COUNT(tweet1.$1);
+joined = join users by login LEFT,tweet3 by $0;
+result = foreach joined generate $1,$4;
+store joined into '/user/lamoria1993my9356/pig/PigAns4';
+
+Solution 5:
+
+users = LOAD '/user/lamoria1993my9356/pig/users.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (login:chararray,name:chararray,state:chararray);
+tweets = LOAD '/user/lamoria1993my9356/pig/tweets.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage() as (tid:chararray,tweet:chararray,login:chararray);
+tweet1 = foreach tweets generate login,tweet;
+tweet2 = group tweet1 by login;
+tweet3 = foreach tweet2 generate group,COUNT(tweet1.$1);
+joined = join users by login,tweet3 by $0;
+result = foreach joined generate $1,$4;
+orderedResult = order result by $1 desc;
+store orderedResult into '/user/lamoria1993my9356/pig/pigAns5';
+
+Solution 6:
+
+data = LOAD '/user/lamoria1993my9356/pig/pigAns5/part-r-00000' as (user_name,number_of_tweet);
+filterdata = filter data by number_of_tweet > 1;
+result = foreach filterdata generate user_name;
+store result into '/user/lamoria1993my9356/pig/pigAns6';
+
+Solution 7:
+
+data = LOAD '/user/lamoria1993my9356/pig/pigAns5/part-r-00000' as (user_name,number_of_tweet);
+filterdata = filter data by number_of_tweet is null;
+result = foreach filterdata generate user_name;
+store result into '/user/lamoria1993my9356/pig/pigAns8';
+
+
