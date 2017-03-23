@@ -45,16 +45,16 @@ store orderedResult into '/user/lamoria1993my9356/pig/pigAns5';
 
 Solution 6:
 
-data = LOAD '/user/lamoria1993my9356/pig/pigAns5/part-r-00000' as (user_name,number_of_tweet);
+data = LOAD '/user/lamoria1993my9356/pig/pigAns4/part-r-00000' as (user_name,number_of_tweet);
 filterdata = filter data by number_of_tweet > 1;
 result = foreach filterdata generate user_name;
 store result into '/user/lamoria1993my9356/pig/pigAns6';
 
 Solution 7:
 
-data = LOAD '/user/lamoria1993my9356/pig/pigAns5/part-r-00000' as (user_name,number_of_tweet);
+data = LOAD '/user/lamoria1993my9356/pig/pigAns4/part-r-00000' as (user_name,number_of_tweet);
 filterdata = filter data by number_of_tweet is null;
 result = foreach filterdata generate user_name;
-store result into '/user/lamoria1993my9356/pig/pigAns8';
+store result into '/user/lamoria1993my9356/pig/pigAns7';
 
 
